@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
-from app.api.v1 import test_route, user_route, auth_route
-from app.api.v1.auth_route import account
+from app.api.v1 import test_route, user_route, auth_route, search_route, goods_route
+from app.utils.email_utils import account
 
 load_dotenv()
 
@@ -16,6 +16,9 @@ app = FastAPI()
 app.include_router(user_route.router)  # 添加用户管理模块的路由
 app.include_router(auth_route.router)  # 添加认证模块的路由
 app.include_router(test_route.router)  # 添加测试模块的路由，用于判断服务是否正常运行
+app.include_router(search_route.router)  # 添加用户检索模块的路由
+app.include_router(goods_route.router) #添加商品管理模块路由
+
 
 
 @app.get("/")

@@ -96,10 +96,13 @@ class Cart(Base):
 class GoodsInfo(Base):
     __tablename__ = 'goods_info'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True, comment='商品ID')
-    name = Column(String(50), unique=True, nullable=False, comment='商品名称')
-    amount = Column(Integer, nullable=False, comment='数量')
-    unit_price = Column(Float, nullable=False, comment='单价')
-    description = Column(Text, comment='描述')
+    name = Column(String(50), nullable=True, comment='商品名称')
+    amount = Column(Integer, nullable=True, comment='数量')
+    unit_price = Column(Float, nullable=True, comment='单价')
+    variety = Column(String(50), comment='品种')
+    color = Column(String(50), comment='花色')
+    occasion = Column(String(50), nullable=True, comment='使用场合')
+    description=Column(Text,nullable=True,comment='商品描述')
     image = Column(String, comment='图片')
 
     carts = relationship('Cart', back_populates='goods')
