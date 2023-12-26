@@ -1,10 +1,14 @@
+import os
 import subprocess
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
-from app.api.v1 import test_route, user_route, auth_route,search_route,goods_route
+from app.api.v1 import test_route, user_route, auth_route, search_route, goods_route
 from app.utils.email_utils import account
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -31,9 +35,8 @@ async def startup_event():
         alembic_command = "alembic upgrade head"
         subprocess.run(alembic_command, shell=True, check=True)
         print("Database initialization completed!")
-    except:
-        pass
-    # except subprocess.CalledProcessError as e:
-    #     print(f"Error while initializing database: {e}")
-    # if not account.is_authenticated:
-    #     account.authenticate()
+    except subprocess.CalledProcessError as e:
+        print(f"Error while initializing database: {e}")
+    # 仅在开发环境下使用
+    if os.getenv('API_URL') == 'http://localhost:8000' and not account.is_authenticated:
+        account.authenticate()

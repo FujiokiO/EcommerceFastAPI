@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Float, Text
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Float, Text, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -49,11 +49,8 @@ class VerificationCode(Base):
 
 class Token(Base):
     __tablename__ = 'token'
-    id = Column(Integer, primary_key=True, index=True, comment='令牌ID')
-    access_token = Column(String, comment='访问令牌')
-    refresh_token = Column(String, comment='刷新令牌')
-    expires_at = Column(Integer, comment='过期时间')
-    is_expired = Column(Boolean, comment='是否已过期')
+    type = Column(String, primary_key=True, index=True, comment='令牌类型')
+    content = Column(JSON, comment='令牌内容')
 
 
 class Order(Base):

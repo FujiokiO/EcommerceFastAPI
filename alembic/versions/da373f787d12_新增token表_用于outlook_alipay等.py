@@ -7,9 +7,8 @@ Create Date: 2023-12-23 23:06:23.518500
 """
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-from app.services.auth_service import get_password_hash
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = 'da373f787d12'

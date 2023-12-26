@@ -9,7 +9,6 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from app.services.auth_service import get_password_hash
 ${imports if imports else ""}
 
 # revision identifiers, used by Alembic.

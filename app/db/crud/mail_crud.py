@@ -1,4 +1,5 @@
 from O365.utils.token import BaseTokenBackend, log
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.db.base import SessionLocal
 from app.models.table_model import Token as TokenModel
@@ -14,46 +15,71 @@ class PostgresBackend(BaseTokenBackend):
         :return dict or None: The token if exists, None otherwise
         """
         token = None
+        db = SessionLocal()
         try:
-            db = SessionLocal()
-            token_data = db.query(TokenModel).first()
+            token_model = db.query(TokenModel).filter_by(type='Microsoft').first()
+            if token_model:
+                token = token_model.content
             db.close()
-
-            if token_data:
-                # Convert data from the database to a Token object
-                token = self.token_constructor({
-                    'access_token': token_data.access_token,
-                    'refresh_token': token_data.refresh_token,
-                    'expires_at': token_data.expires_at,
-                    'is_expired': token_data.is_expired
-                    # Add other fields as needed
-                })
-        except Exception as e:
+        except SQLAlchemyError as e:
             log.error("Token could not be retrieved from the backend: {}".format(e))
 
         return token
 
-    def save_token(self):
+    def save_token(self) -> bool:
         """
         Saves the token dict in the database
         :return bool: Success / Failure
         """
         if self.token is None:
             raise ValueError('You have to set the "token" first.')
-
+        db = SessionLocal()
         try:
-            db = SessionLocal()
             token_model = TokenModel(
-                access_token=self.token.get('access_token'),
-                refresh_token=self.token.get('refresh_token'),
-                expires_at=self.token.get('expires_at'),
-                is_expired=self.token.get('is_expired')
+                type='Microsoft',
+                content=self.token
             )
             db.add(token_model)
             db.commit()
-            db.close()
-        except Exception as e:
+            return True
+        except SQLAlchemyError as e:
             log.error("Token could not be saved: {}".format(e))
             return False
+        finally:
+            db.close()
 
-        return True
+    def delete_token(self) -> bool:
+        """
+        Deletes the token from the database
+        :return bool: Success / Failure
+        """
+        db = SessionLocal()
+        try:
+            token_model = db.query(TokenModel).filter_by(type='Microsoft').first()
+            if token_model:
+                db.delete(token_model)
+                db.commit()
+                return True
+            return False
+        except SQLAlchemyError as e:
+            log.error("Token could not be deleted from the backend: {}".format(e))
+            # 在这里处理数据库错误，根据需要进行日志记录或其他操作
+            return False
+        finally:
+            db.close()
+
+    def check_token(self) -> bool:
+        """
+        Checks if the token exists in the database
+        :return bool: True if exists, False otherwise
+        """
+        db = SessionLocal()
+        try:
+            token_model = db.query(TokenModel).filter_by(type='Microsoft').first()
+            return token_model is not None
+        except SQLAlchemyError as e:
+            log.error("Error checking token existence: {}".format(e))
+            # 在这里处理数据库错误，根据需要进行日志记录或其他操作
+            return False
+        finally:
+            db.close()

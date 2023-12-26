@@ -3,9 +3,9 @@
 
 <head>
     <title>FastAPI - 网上鲜花店</title>
-    <link rel="shortcut icon" href="https://fastapi.tiangolo.com/img/favicon.png">
+    <link href="https://fastapi.tiangolo.com/img/favicon.png" rel="shortcut icon">
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <style>
         body {
             display: flex;
@@ -47,7 +47,7 @@
 <body>
 <div>
     <div style="text-align: center;">
-        <svg fill="none" height="60" width="60" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 154 154">
+        <svg fill="none" height="60" viewBox="0 0 154 154" width="60" xmlns="http://www.w3.org/2000/svg">
             <circle cx="77" cy="77" fill="#05998b" r="77"></circle>
             <path d="M81.375 18.667l-38.75 70H77.5l-3.875 46.666 38.75-70H77.5z" fill="#fff"></path>
         </svg>
@@ -56,19 +56,21 @@
     <div style="margin: 5px 30px 0 30px;"><a href="/docs#">FastAPI</a> platform !</div>
 </div>
 
-    <script>
-        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-        const currentHour = new Date().getHours();
-        const body = document.querySelector("body");
+<script>
+  const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+  const currentHour = new Date().getHours();
+  const body = document.querySelector("body");
 
-        if (prefersDarkScheme.matches || (currentHour >= 19 || currentHour < 7)) {
-            body.classList.add("dark-mode");
-        }
-    </script>
-    <script>
-        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
-    <script defer src="/_vercel/insights/script.js"></script>
+  if (prefersDarkScheme.matches || (currentHour >= 19 || currentHour < 7)) {
+    body.classList.add("dark-mode");
+  }
+</script>
+<script>
+  window.va = window.va || function () {
+    (window.vaq = window.vaq || []).push(arguments);
+  };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 
 </html>

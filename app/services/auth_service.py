@@ -1,22 +1,23 @@
 """认证服务逻辑：services/auth_service.py"""
+import os
 from datetime import datetime, timedelta
 from typing import Union
 
+from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from app.db.crud.user_crud import get_user, insert_verification_code
+from app.db.crud.user_crud import get_user_by_name, insert_verification_code
 from app.models.token_model import TokenData
 from app.models.user_model import BaseUser, UserInDB
 
-SECRET_KEY = "2b0376b2fc0d109d50b512b5292fa726eb969caccb4cc60d14485f81957d2e55"
-ALGORITHM = "HS256"
+load_dotenv()
+SECRET_KEY = os.getenv('SECRET_KEY')
+ALGORITHM = os.getenv('ALGORITHM')
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth")
 
 
@@ -29,7 +30,7 @@ def get_password_hash(password):
 
 
 def authenticate_user(username: str, password: str) -> Union[UserInDB, str]:
-    user = get_user(username)
+    user = get_user_by_name(username)
     if not user:
         return "User not found"
     if not verify_password(password, user.hashed_password):
@@ -75,7 +76,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         # 调用异步函数 get_current_token 并等待其返回结果
         username = await get_current_token(token)
-        user = get_user(username, mode='normal')
+        user = get_user_by_name(username, mode='normal')
         if user is None:
             raise credentials_exception
         return user
@@ -92,7 +93,7 @@ async def get_current_user_db(token: str = Depends(oauth2_scheme)):
     )
     try:
         username = await get_current_token(token)
-        user = get_user(username)
+        user = get_user_by_name(username)
         if user is None:
             raise credentials_exception
         return user
